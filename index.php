@@ -20,7 +20,7 @@ switch ($action) {
     case 'manager_login':
         include 'api/auth_api_manager.php';    // Include ticket API
         break;
-  case 'agent_login':
+    case 'agent_login':
             include 'api/auth_api_agent.php';    
             break;
         case 'logout':
@@ -34,7 +34,7 @@ switch ($action) {
         include 'admin/signout.php';  // Handle sign-out logic
         break;
 
-    // Handle any other necessary cases
+ 
     default:
         echo json_encode(['error' => 'Invalid action.']);  // Default case for invalid action
         break;
