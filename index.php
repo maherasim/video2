@@ -17,9 +17,12 @@ switch ($action) {
         break;
 
     // Add more cases for other endpoints here
-    case 'login':
+    case 'manager_login':
         include 'api/auth_api.php';    // Include ticket API
         break;
+  case 'agent_login':
+            include 'api/auth_api_agent.php';    
+            break;
         case 'logout':
             include 'api/logout.php';    // Include ticket API
             break;
