@@ -18,7 +18,7 @@ switch ($action) {
 
     // Add more cases for other endpoints here
     case 'manager_login':
-        include 'api/auth_api.php';    // Include ticket API
+        include 'api/auth_api_manager.php';    // Include ticket API
         break;
   case 'agent_login':
             include 'api/auth_api_agent.php';    
