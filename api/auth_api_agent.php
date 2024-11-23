@@ -7,12 +7,13 @@ header('Content-Type: application/json');
 // Parse JSON body if sent
 $input = json_decode(file_get_contents('php://input'), true);
 
-// Extract email and password
+// Extract email, password, and role
 $email = $input['email'] ?? '';
 $password = $input['password'] ?? '';
+$role = $input['role'] ?? '';
 
-// Check if email and password are provided
-if (!empty($email) && !empty($password)) {
+// Check if email, password, and role are provided
+if (!empty($email) && !empty($password) && !empty($role)) {
     // Prepare the query to check if the user exists
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $stmt->bind_param("s", $email);
@@ -24,21 +25,31 @@ if (!empty($email) && !empty($password)) {
 
         // Check if the password matches
         if ($password === $user['password']) { // Direct comparison for plain text
-            // Generate session token
-            $sessionToken = bin2hex(random_bytes(32));
 
-            // Save session token in the database
-            $updateStmt = $conn->prepare("UPDATE users SET session_token = ? WHERE id = ?");
-            $updateStmt->bind_param("si", $sessionToken, $user['id']);
-            $updateStmt->execute();
+            // Check if the role matches the provided role
+            if ($role === $user['role']) {
+                // Generate session token
+                $sessionToken = bin2hex(random_bytes(32));
 
-            // Successful login
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Login successful',
-                'token' => $sessionToken,
-                'role' => $user['role'] // 'agent' or 'manager'
-            ]);
+                // Save session token in the database
+                $updateStmt = $conn->prepare("UPDATE users SET session_token = ? WHERE id = ?");
+                $updateStmt->bind_param("si", $sessionToken, $user['id']);
+                $updateStmt->execute();
+
+                // Successful login
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Login successful',
+                    'token' => $sessionToken,
+                    'role' => $user['role']
+                ]);
+            } else {
+                // Role mismatch
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Unauthorized role. Expected role does not match.'
+                ]);
+            }
         } else {
             // Incorrect password
             echo json_encode([
@@ -54,10 +65,10 @@ if (!empty($email) && !empty($password)) {
         ]);
     }
 } else {
-    // Missing email or password
+    // Missing email, password, or role
     echo json_encode([
         'status' => 'error',
-        'message' => 'Email and password are required'
+        'message' => 'Email, password, and role are required'
     ]);
 }
 ?>

@@ -24,21 +24,31 @@ if (!empty($email) && !empty($password)) {
 
         // Check if the password matches
         if ($password === $user['password']) { // Direct comparison for plain text
-            // Generate session token
-            $sessionToken = bin2hex(random_bytes(32));
 
-            // Save session token in the database
-            $updateStmt = $conn->prepare("UPDATE users SET session_token = ? WHERE id = ?");
-            $updateStmt->bind_param("si", $sessionToken, $user['id']);
-            $updateStmt->execute();
+            // Check if the role is 'manager'
+            if ($user['role'] === 'manager') {
+                // Generate session token
+                $sessionToken = bin2hex(random_bytes(32));
 
-            // Successful login
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Login successful',
-                'token' => $sessionToken,
-                'role' => $user['role'] // 'agent' or 'manager'
-            ]);
+                // Save session token in the database
+                $updateStmt = $conn->prepare("UPDATE users SET session_token = ? WHERE id = ?");
+                $updateStmt->bind_param("si", $sessionToken, $user['id']);
+                $updateStmt->execute();
+
+                // Successful login
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Login successful',
+                    'token' => $sessionToken,
+                    'role' => $user['role']
+                ]);
+            } else {
+                // User is not a manager
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Unauthorized role. Only managers are allowed.'
+                ]);
+            }
         } else {
             // Incorrect password
             echo json_encode([
