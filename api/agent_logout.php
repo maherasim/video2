@@ -30,7 +30,7 @@ if (!empty($email) && !empty($sessionToken)) {
         // Successful logout
         echo json_encode([
             'status' => 'success',
-            'message' => 'Logout successful'
+            'message' => 'Logout successfully'
         ]);
     } else {
         // Invalid session token or user not found
