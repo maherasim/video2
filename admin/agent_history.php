@@ -121,11 +121,13 @@ $agents = $result->fetch_all(MYSQLI_ASSOC);
         <tbody>
             <?php foreach ($agents as $agent): ?>
                 <?php
-                // Calculate the duration in minutes
+                // Calculate the duration including seconds
                 $check_in = new DateTime($agent['check_in_time']);
                 $check_out = new DateTime($agent['check_out_time']);
                 $interval = $check_in->diff($check_out);
-                $duration = $interval->format('%h hours %i minutes');
+                
+                // Get the duration in hours, minutes, and seconds
+                $duration = $interval->format('%h hours %i minutes %s seconds');
                 ?>
                 <tr>
                     <td><?= $agent['email']; ?></td>
