@@ -20,9 +20,15 @@ switch ($action) {
     case 'manager_login':
         include 'api/auth_api_manager.php';    // Include ticket API
         break;
+   case 'manager_logout':
+            include 'api/manager_logout.php';    // Include ticket API
+            break;
     case 'agent_login':
             include 'api/auth_api_agent.php';    
             break;
+    case 'agent_logout':
+                include 'api/agent_logout.php';    // Include ticket API
+                break;
         case 'logout':
             include 'api/logout.php';    // Include ticket API
             break;
