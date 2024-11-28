@@ -23,8 +23,8 @@ if (!empty($email) && !empty($password) && !empty($role)) {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Check if the password matches
-        if ($password === $user['password']) { // Direct comparison for plain text
+        // Use password_verify to check if the entered password matches the hashed password
+        if (password_verify($password, $user['password'])) {
 
             // Check if the role matches the requested role
             if ($user['role'] === $role) {
