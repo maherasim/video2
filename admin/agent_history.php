@@ -9,8 +9,8 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit;
 }
 
-// Fetch all agents' data (email, check_in_time, check_out_time)
-$result = $conn->query("SELECT email, check_in_time, check_out_time FROM users WHERE check_in_time IS NOT NULL AND check_out_time IS NOT NULL");
+// Fetch all agents' data (name, email, check_in_time, check_out_time)
+$result = $conn->query("SELECT name, email, check_in_time, check_out_time FROM users WHERE check_in_time IS NOT NULL AND check_out_time IS NOT NULL");
 $agents = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
@@ -131,12 +131,10 @@ $agents = $result->fetch_all(MYSQLI_ASSOC);
                 $duration = $interval->format('%h hours %i minutes %s seconds');
                 ?>
                 <tr>
-                <td><?= $agent['name']; ?></td>
-
-                    <td><?= $agent['email']; ?></td>
-                   
-                    <td><?= $agent['check_in_time']; ?></td>
-                    <td><?= $agent['check_out_time']; ?></td>
+                    <td><?= htmlspecialchars($agent['name']); ?></td> <!-- Display agent's name -->
+                    <td><?= htmlspecialchars($agent['email']); ?></td>
+                    <td><?= htmlspecialchars($agent['check_in_time']); ?></td>
+                    <td><?= htmlspecialchars($agent['check_out_time']); ?></td>
                     <td><?= $duration; ?></td>
                 </tr>
             <?php endforeach; ?>
