@@ -112,6 +112,7 @@ $agents = $result->fetch_all(MYSQLI_ASSOC);
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Check In</th>
                 <th>Check Out</th>
@@ -130,7 +131,10 @@ $agents = $result->fetch_all(MYSQLI_ASSOC);
                 $duration = $interval->format('%h hours %i minutes %s seconds');
                 ?>
                 <tr>
+                <td><?= $agent['name']; ?></td>
+
                     <td><?= $agent['email']; ?></td>
+                   
                     <td><?= $agent['check_in_time']; ?></td>
                     <td><?= $agent['check_out_time']; ?></td>
                     <td><?= $duration; ?></td>
