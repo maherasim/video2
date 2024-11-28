@@ -22,8 +22,8 @@ if (!empty($email) && !empty($sessionToken)) {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Update the session token to null, effectively logging the user out
-        $updateStmt = $conn->prepare("UPDATE users SET session_token = NULL WHERE id = ?");
+        // Update the session token to NULL, effectively logging the user out
+        $updateStmt = $conn->prepare("UPDATE users SET session_token = NULL, check_out_time = NOW() WHERE id = ?");
         $updateStmt->bind_param("i", $user['id']);
         $updateStmt->execute();
 

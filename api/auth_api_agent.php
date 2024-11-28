@@ -26,13 +26,13 @@ if (!empty($email) && !empty($password) && !empty($role)) {
         // Check if the password matches
         if ($password === $user['password']) { // Direct comparison for plain text
 
-            // Check if the role matches the provided role
-            if ($role === $user['role']) {
+            // Check if the role matches the requested role
+            if ($user['role'] === $role) {
                 // Generate session token
                 $sessionToken = bin2hex(random_bytes(32));
 
                 // Save session token in the database
-                $updateStmt = $conn->prepare("UPDATE users SET session_token = ? WHERE id = ?");
+                $updateStmt = $conn->prepare("UPDATE users SET session_token = ?, check_in_time = NOW() WHERE id = ?");
                 $updateStmt->bind_param("si", $sessionToken, $user['id']);
                 $updateStmt->execute();
 
@@ -41,13 +41,17 @@ if (!empty($email) && !empty($password) && !empty($role)) {
                     'status' => 'success',
                     'message' => 'Login successful',
                     'token' => $sessionToken,
-                    'role' => $user['role']
+                    'user' => [
+                        'id' => $user['id'],
+                        'email' => $user['email'],
+                        'role' => $user['role']
+                    ]
                 ]);
             } else {
                 // Role mismatch
                 echo json_encode([
                     'status' => 'error',
-                    'message' => 'Unauthorized role. Expected role does not match.'
+                    'message' => 'Unauthorized role. Expected role: ' . $role
                 ]);
             }
         } else {
