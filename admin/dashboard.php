@@ -83,6 +83,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
     <ul>
         <li><a href="restaurants.php">Manage Restaurants</a></li>
         <li><a href="terminals.php">Manage Terminals</a></li>
+        <li><a href="agent_history.php">Manage Agent History</a></li>
         <li><a href="logout.php">Logout</a></li>
     </ul>
 </div>
