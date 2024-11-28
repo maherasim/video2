@@ -49,6 +49,7 @@ if (!empty($email) && !empty($password) && !empty($role)) {
                 ]);
             } else {
                 // Role mismatch
+                http_response_code(403);  // Forbidden
                 echo json_encode([
                     'status' => 'error',
                     'message' => 'Unauthorized role. Expected role: ' . $role
@@ -56,6 +57,7 @@ if (!empty($email) && !empty($password) && !empty($role)) {
             }
         } else {
             // Incorrect password
+            http_response_code(401);  // Unauthorized
             echo json_encode([
                 'status' => 'error',
                 'message' => 'Invalid password'
@@ -63,6 +65,7 @@ if (!empty($email) && !empty($password) && !empty($role)) {
         }
     } else {
         // User not found
+        http_response_code(404);  // Not Found
         echo json_encode([
             'status' => 'error',
             'message' => 'User not found'
@@ -70,6 +73,7 @@ if (!empty($email) && !empty($password) && !empty($role)) {
     }
 } else {
     // Missing email, password, or role
+    http_response_code(400);  // Bad Request
     echo json_encode([
         'status' => 'error',
         'message' => 'Email, password, and role are required'
