@@ -33,7 +33,7 @@ class TerminalStatusServer implements MessageComponentInterface {
     public function broadcastStatusUpdate($status, $terminal_id) {
         foreach ($this->clients as $client) {
             $client->send(json_encode([
-                'action' => 'update_terminal_status',
+                'action' => 'terminal_status',
                 'terminal_id' => $terminal_id,
                 'status' => $status
             ]));
