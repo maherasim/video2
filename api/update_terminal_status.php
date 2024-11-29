@@ -1,5 +1,7 @@
-<?php
+<?php 
+// update_terminal_status.php
 require_once 'database.php';
+require_once 'websocket_server.php';  // Include the WebSocket server
 
 header('Content-Type: application/json');
 
@@ -18,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $terminal_id = $data['terminal_id'];
         $status = $data['status'];
 
-        // Update terminal status
+        // Update terminal status in the database
         $stmt = $conn->prepare("UPDATE terminals SET status = ? WHERE terminal_id = ?");
         if (!$stmt) {
             http_response_code(500);
@@ -38,6 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($stmt->affected_rows > 0) {
+            // Broadcast the terminal status update to all connected WebSocket clients
+            $server = new TerminalStatusServer();
+            $server->broadcastStatusUpdate($status, $terminal_id); // Send update to frontend via WebSocket
+
             echo json_encode(["message" => "Terminal status updated successfully."]);
         } else {
             http_response_code(404);
@@ -58,4 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     http_response_code(405);
     echo json_encode(["error" => "Invalid request method. Use POST."]);
 }
+
+
 ?>
