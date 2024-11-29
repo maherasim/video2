@@ -3,7 +3,6 @@ require_once '../database.php';
 
 header('Content-Type: application/json');
 
-// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Get JSON input
@@ -23,16 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE terminals SET status = ? WHERE terminal_id = ?");
         if (!$stmt) {
             http_response_code(500);
-            echo json_encode(["error" => "Database error: Failed to prepare statement."]);
-            error_log("Statement preparation failed: " . $conn->error); // Log error
+            $error = "Database error: Failed to prepare statement. " . $conn->error;
+            echo json_encode(["error" => $error]);
+            error_log($error); // Log error
             exit;
         }
 
         $stmt->bind_param("ss", $status, $terminal_id);
         if (!$stmt->execute()) {
             http_response_code(500);
-            echo json_encode(["error" => "Failed to execute update."]);
-            error_log("Statement execution failed: " . $stmt->error); // Log error
+            $error = "Database error: Failed to execute update. " . $stmt->error;
+            echo json_encode(["error" => $error]);
+            error_log($error); // Log error
             exit;
         }
 
@@ -40,15 +41,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(["message" => "Terminal status updated successfully."]);
         } else {
             http_response_code(404);
-            echo json_encode(["error" => "Terminal not found with the provided terminal_id."]);
+            $error = "No terminal found with terminal_id: $terminal_id";
+            echo json_encode(["error" => $error]);
+            error_log($error); // Log error
         }
 
         $stmt->close();
         $conn->close();
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(["error" => "An unexpected error occurred."]);
-        error_log("Exception: " . $e->getMessage()); // Log exception
+        $error = "Unexpected error: " . $e->getMessage();
+        echo json_encode(["error" => $error]);
+        error_log($error); // Log exception
     }
 } else {
     http_response_code(405);
