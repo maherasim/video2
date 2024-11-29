@@ -23,6 +23,9 @@ switch ($action) {
    case 'manager_logout':
             include 'api/manager_logout.php';    // Include ticket API
             break;
+ case 'terminal_status':
+                include 'api/update_terminal_status.php';    // Include ticket API
+                break;
     case 'agent_login':
             include 'api/auth_api_agent.php';    
             break;
