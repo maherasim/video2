@@ -7,38 +7,61 @@ if (!isset($_SESSION['admin_logged_in'])) {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Add new terminal
-    if (isset($_POST['add_terminal'])) {
-        $restaurant_id = $_POST['restaurant_id'];
-        $terminal_id = $_POST['terminal_id'];
-        $status = $_POST['status'];
+if (isset($_POST['add_terminal'])) {
+    $restaurant_id = $_POST['restaurant_id'];
+    $terminal_id = $_POST['terminal_id'];
+    $status = $_POST['status'];
 
+    // Check if terminal_id already exists
+    $check_stmt = $conn->prepare("SELECT COUNT(*) FROM terminals WHERE terminal_id = ?");
+    $check_stmt->bind_param("s", $terminal_id);
+    $check_stmt->execute();
+    $check_stmt->bind_result($count);
+    $check_stmt->fetch();
+    $check_stmt->close();
+
+    if ($count > 0) {
+        echo "<div class='alert alert-danger'>Terminal ID already exists. Please choose a different ID.</div>";
+    } else {
         $stmt = $conn->prepare("INSERT INTO terminals (restaurant_id, terminal_id, status) VALUES (?, ?, ?)");
         $stmt->bind_param("iss", $restaurant_id, $terminal_id, $status);
         $stmt->execute();
+        echo "<div class='alert alert-success'>Terminal added successfully.</div>";
     }
+}
 
-    // Delete terminal
-    if (isset($_POST['delete_terminal'])) {
-        $id = $_POST['terminal_id'];
-        $stmt = $conn->prepare("DELETE FROM terminals WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-    }
+   // Delete terminal
+   if (isset($_POST['delete_terminal'])) {
+    $id = $_POST['terminal_id'];
+    $stmt = $conn->prepare("DELETE FROM terminals WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+}
 
-    // Update terminal
-    if (isset($_POST['update_terminal'])) {
-        $id = $_POST['terminal_id'];
-        $restaurant_id = $_POST['restaurant_id'];
-        $terminal_id = $_POST['new_terminal_id'];
-        $status = $_POST['status'];
+if (isset($_POST['update_terminal'])) {
+    $id = $_POST['terminal_id'];
+    $restaurant_id = $_POST['restaurant_id'];
+    $terminal_id = $_POST['new_terminal_id'];
+    $status = $_POST['status'];
 
+    // Check if terminal_id already exists for a different terminal
+    $check_stmt = $conn->prepare("SELECT COUNT(*) FROM terminals WHERE terminal_id = ? AND id != ?");
+    $check_stmt->bind_param("si", $terminal_id, $id);
+    $check_stmt->execute();
+    $check_stmt->bind_result($count);
+    $check_stmt->fetch();
+    $check_stmt->close();
+
+    if ($count > 0) {
+        echo "<div class='alert alert-danger'>Terminal ID already exists. Please choose a different ID.</div>";
+    } else {
         $stmt = $conn->prepare("UPDATE terminals SET restaurant_id = ?, terminal_id = ?, status = ? WHERE id = ?");
         $stmt->bind_param("issi", $restaurant_id, $terminal_id, $status, $id);
         $stmt->execute();
+        echo "<div class='alert alert-success'>Terminal updated successfully.</div>";
     }
 }
+
 
 // Fetch all terminals with restaurant names and status
 $query = "
