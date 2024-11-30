@@ -15,16 +15,16 @@ class TerminalStatusServer implements MessageComponentInterface {
         $this->clients->attach($conn);
         echo "New connection: ({$conn->resourceId})\n";
     }
-
+    
+    public function onMessage(ConnectionInterface $from, $msg) {
+        echo "Message received from {$from->resourceId}: $msg\n";
+    }
+    
     public function onClose(ConnectionInterface $conn) {
         $this->clients->detach($conn);
         echo "Connection closed: ({$conn->resourceId})\n";
     }
-
-    public function onMessage(ConnectionInterface $from, $msg) {
-        // Optionally handle messages from clients if needed
-        echo "Message received: $msg\n";
-    }
+    
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "Error: {$e->getMessage()}\n";
