@@ -1,7 +1,6 @@
 <?php 
-
-// websocket_server.php
 require_once 'vendor/autoload.php';
+
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
@@ -9,19 +8,22 @@ class TerminalStatusServer implements MessageComponentInterface {
     private $clients;
 
     public function __construct() {
-        $this->clients = new \SplObjectStorage;
+        $this->clients = new \SplObjectStorage();
     }
 
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
+        echo "New connection: ({$conn->resourceId})\n";
     }
 
     public function onClose(ConnectionInterface $conn) {
         $this->clients->detach($conn);
+        echo "Connection closed: ({$conn->resourceId})\n";
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        // Handle incoming message from clients if needed
+        // Optionally handle messages from clients if needed
+        echo "Message received: $msg\n";
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
@@ -35,14 +37,15 @@ class TerminalStatusServer implements MessageComponentInterface {
             $client->send(json_encode([
                 'action' => 'terminal_status',
                 'terminal_id' => $terminal_id,
-                'status' => $status
+                'status' => $status,
             ]));
         }
     }
 }
 
-$server = new Ratchet\App('84.247.187.38', 9001); 
+$server = new Ratchet\App('0.0.0.0', 9001); // Bind to all interfaces
 $server->route('/status', new TerminalStatusServer(), ['*']);
 $server->run();
+
 
 ?>
