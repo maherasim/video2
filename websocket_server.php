@@ -44,7 +44,7 @@ class TerminalStatusServer implements MessageComponentInterface {
 }
 
 $server = new Ratchet\App('0.0.0.0', 9001); // Bind to all interfaces
-$server->route('/status', new TerminalStatusServer(), ['*']);
+$server->route('/terminal_status', new TerminalStatusServer(), ['*']);
 $server->run();
 
 
