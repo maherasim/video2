@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->affected_rows > 0) {
             // WebSocket broadcast
-            $websocketClient = new WebSocket\Client("ws://84.247.187.38:9001/status");
+            $websocketClient = new WebSocket\Client("ws://84.247.187.38:9001/terminal_status");
             $websocketClient->send(json_encode([
                 'action' => 'terminal_status',
                 'terminal_id' => $terminal_id,
